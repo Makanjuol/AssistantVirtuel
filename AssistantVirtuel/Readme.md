@@ -14,15 +14,15 @@ Assistant vocal capable de :
 
 ### 1. Cloner le projet
 ```bash
-git clone https://github.com/Makanjuol/AssistantVirtuel.git
-cd assistant-vocal
+git clone https://github.com/Makanjuol/AssistantVirtuel
+cd AssistantVirtuel
 ````
 
 ### 2. Créer un environnement virtuel
 
 ```bash
 python -m venv venv
-source venv/bin/activate        # ou venv\Scripts\activate (Windows)
+source venv/bin/activate        # ou venv\Scripts\activate 
 ```
 
 ### 3. Installer les dépendances
@@ -172,7 +172,6 @@ AssistantVirtuel/
 ├── requirements.txt
 ├── .env
 └── Readme.md
-```
 
 ---
 
