@@ -1,0 +1,19 @@
+# Transcription vocale
+SpeechRecognition==3.10.0
+pyaudio==0.2.14
+
+# Synthèse vocale
+pyttsx3==2.90
+
+# OpenAI API
+openai==1.14.3
+
+# API REST
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+
+# Gestion .env
+python-dotenv==1.0.1
+
+requests
+pudub

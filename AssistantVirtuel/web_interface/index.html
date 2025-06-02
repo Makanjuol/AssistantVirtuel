@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>🤖 Assistant Vocal Intelligent</title>
+  
+</head>
+<body>
+  <h2>🤖 Assistant Vocal Intelligent</h2>
+
+  <input type="file" id="audioInput" accept="audio/*">
+  <button onclick="sendAudio()">📤 Envoyer</button>
+  <button id="recordBtn" class="img">🎙️</button>
+  <button id="stopBtn" class="img" disabled>⏹️</button>
+
+  <p id="status">⏳ En attente...</p>
+
+  <div id="result" style="display: none;">
+    <p><strong>📝 Transcription :</strong> <span id="transcription"></span></p>
+    <p><strong>🤖 Réponse :</strong> <span id="responseText"></span></p>
+    <audio id="audioPlayer" controls autoplay></audio>
+  </div>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    const recordBtn = document.getElementById("recordBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const audioInput = document.getElementById("audioInput");
+    const status = document.getElementById("status");
+    const audioPlayer = document.getElementById("audioPlayer");
+
+    recordBtn.onclick = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunks, { type: "audio/webm" });
+        const formData = new FormData();
+        formData.append("file", blob, "recorded.webm");
+        await sendFormData(formData);
+      };
+
+      mediaRecorder.start();
+      status.textContent = "🔴 Enregistrement en cours...";
+      recordBtn.disabled = true;
+      stopBtn.disabled = false;
+    };
+
+    stopBtn.onclick = () => {
+      mediaRecorder.stop();
+      status.textContent = "⏹️ Traitement de l'enregistrement...";
+      recordBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+
+    async function sendAudio() {
+      const file = audioInput.files[0];
+      if (!file) return alert("Veuillez choisir un fichier audio.");
+      const formData = new FormData();
+      formData.append("file", file);
+      await sendFormData(formData);
+    }
+
+    async function sendFormData(formData) {
+      status.textContent = "📤 Envoi du fichier audio...";
+
+      const res = await fetch("http://localhost:8000/assistant/", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        alert("❌ Erreur API : " + errorText);
+        status.textContent = "❌ Une erreur est survenue.";
+        return;
+      }
+
+      const data = await res.json();
+      document.getElementById("transcription").textContent = data.transcription;
+      document.getElementById("responseText").textContent = data.response_text;
+      audioPlayer.src = `http://localhost:8000/speak/file/${data.audio_filename}`;
+      document.getElementById("result").style.display = "block";
+      audioPlayer.style.display = "block";
+      status.textContent = "✅ Réponse reçue et lue.";
+    }
+  </script>
+</body>
+</html>
