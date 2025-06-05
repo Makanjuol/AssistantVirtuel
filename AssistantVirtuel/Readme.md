@@ -4,7 +4,7 @@
 Assistant vocal capable de :
 - 🎙️ Enregistrer ou recevoir un fichier audio
 - 📝 Transcrire la parole en texte
-- 🤖 Générer une réponse avec GPT-3.5 **ou** DeepSeek localement
+- 🤖 Générer une réponse avec GPT-3.5 ou DeepSeek localement
 - 🔊 Lire la réponse avec synthèse vocale
 - 🖥️ Fournir une interface web simple avec historique et export
 
@@ -22,7 +22,7 @@ cd AssistantVirtuel
 
 ```bash
 python -m venv venv
-source venv/bin/activate        # ou venv\Scripts\activate 
+source venv/bin/activate        # ou venv\Scripts\activate (Windows)
 ```
 
 ### 3. Installer les dépendances
@@ -98,7 +98,7 @@ Utilisation
    ollama run mistral
 
 2. Lancer le programme :
-   python -m AssistantCLI.main
+   python -m AssistantCLI.main 
 
 
 
@@ -145,7 +145,7 @@ uvicorn ApiRest.main:app --reload
 
 ### 📁 Exporter l’historique
 
-Clique sur **"Exporter l’historique"** pour obtenir un fichier `.json` de tous les échanges.
+Clique sur **"Exporter l’historique"** pour obtenir un fichier `pdf` de tous les échanges.
 
 
 ---
@@ -162,16 +162,21 @@ AssistantVirtuel/
 │       ├── transcription.py
 │       ├── generation.py
 │       └── synthesis.py
-├── cli_assistant/
-│   └── chat_engine.py
+├── AssistantCLI/
+│   ├── chat_engine.py
+│   ├── main.py
+│   ├── transcriber.py
+│   ├── recorder.py
+│   └── VoiceOutout.py
 ├── web_interface/
-│   └── index.html
+│   ├── index.html
 │   └── style.css
 ├── uploaded_audio/
 ├── response_audio/
 ├── requirements.txt
 ├── .env
 └── Readme.md
+
 
 ---
 

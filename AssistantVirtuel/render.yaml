@@ -1,0 +1,7 @@
+Services:
+  - type: web
+    name: myapp
+    env: python
+    buildeCommand: pip install -r requirements.txt
+    startCommand: uvicorn ApiRest.main:app --host 0.0.0.0 --ports 10000
+    autoDeploy: true

@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="style.css">
   <title>🤖 Assistant Vocal Intelligent</title>
   
 </head>
 <body>
-  <h2>🤖 Assistant Vocal Intelligent</h2>
+  <div class="container">
+    <h2>🤖 Assistant Vocal Intelligent</h2>
+    <button onclick="toggleTheme()" class="mode">🌓 Mode</button>
 
-  <input type="file" id="audioInput" accept="audio/*">
-  <button onclick="sendAudio()">📤 Envoyer</button>
-  <button id="recordBtn" class="img">🎙️</button>
-  <button id="stopBtn" class="img" disabled>⏹️</button>
+    <input type="file" id="audioInput" accept="audio/*">
+    <button onclick="sendAudio()" class="mode">📤Envoyer</button>
+    <div class="buttons">
+      <button id="recordBtn">🎙️</button>
+      <button id="stopBtn" disabled>⏹️</button>
+      <button onclick="exportHistory()">📁Historique</button>
+    </div>
 
-  <p id="status">⏳ En attente...</p>
+    <p id="status">⏳ En attente...</p>
 
-  <div id="result" style="display: none;">
-    <p><strong>📝 Transcription :</strong> <span id="transcription"></span></p>
-    <p><strong>🤖 Réponse :</strong> <span id="responseText"></span></p>
-    <audio id="audioPlayer" controls autoplay></audio>
+    <div id="result">
+      <p><strong>📝 Transcription :</strong> <span id="transcription"></span></p>
+      <p><strong>🤖 Réponse :</strong> <span id="responseText"></span></p>
+      <audio id="audioPlayer" controls autoplay></audio>
+    </div>
   </div>
 
   <script>
+    const BASE_URL = "https://assistantvirtuel.onrender.com";
     let mediaRecorder;
     let audioChunks = [];
 
@@ -32,6 +39,10 @@
     const audioInput = document.getElementById("audioInput");
     const status = document.getElementById("status");
     const audioPlayer = document.getElementById("audioPlayer");
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
 
     recordBtn.onclick = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -73,7 +84,7 @@
     async function sendFormData(formData) {
       status.textContent = "📤 Envoi du fichier audio...";
 
-      const res = await fetch("http://localhost:8000/assistant/", {
+      const res = await fetch(BASE_URL + "/assistant/", {
         method: "POST",
         body: formData
       });
@@ -88,10 +99,23 @@
       const data = await res.json();
       document.getElementById("transcription").textContent = data.transcription;
       document.getElementById("responseText").textContent = data.response_text;
-      audioPlayer.src = `http://localhost:8000/speak/file/${data.audio_filename}`;
+      audioPlayer.src = `${BASE_URL}/speak/file/${data.audio_filename}`;
       document.getElementById("result").style.display = "block";
       audioPlayer.style.display = "block";
       status.textContent = "✅ Réponse reçue et lue.";
+    }
+
+    function exportHistory() {
+      const transcription = document.getElementById("transcription").textContent;
+      const response = document.getElementById("responseText").textContent;
+      const content = `Transcription : ${transcription}\nRéponse : ${response}`;
+      const blob = new Blob([content], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "historique.txt";
+      a.click();
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>

@@ -26,7 +26,7 @@ def generate_speech(text: str) -> str:
         mp3_path = os.path.join(SYNTH_DIR, mp3_filename)
 
         engine = pyttsx3.init()
-        engine.setProperty("rate", 160)
+        engine.setProperty("rate", 170)
         engine.setProperty("volume", 1.0)
 
         # Choix voix française (si dispo)
